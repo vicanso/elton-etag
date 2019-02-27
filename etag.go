@@ -69,6 +69,7 @@ func New(config Config) cod.Handler {
 			return
 		}
 		// 如果响应状态码不为0 而且( < 200 或者 >= 300)，则跳过
+		// 如果未设置状态码，最终为200
 		statusCode := c.StatusCode
 		if statusCode != 0 &&
 			(statusCode < http.StatusOK ||
