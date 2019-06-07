@@ -9,5 +9,9 @@ test:
 test-cover:
 	go test -race -coverprofile=test.out ./... && go tool cover --html=test.out
 
+
+bench:
+	go test -bench=. ./...
+
 release:
 	go mod tidy
