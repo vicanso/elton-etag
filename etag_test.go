@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 )
 
 var testData []byte
@@ -40,7 +40,7 @@ func TestETag(t *testing.T) {
 	t.Run("curstom error", func(t *testing.T) {
 		assert := assert.New(t)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, nil)
+		c := elton.NewContext(resp, nil)
 		customErr := errors.New("abcd")
 		c.Next = func() error {
 			return customErr
@@ -52,19 +52,19 @@ func TestETag(t *testing.T) {
 	t.Run("no body", func(t *testing.T) {
 		assert := assert.New(t)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, nil)
+		c := elton.NewContext(resp, nil)
 		c.Next = func() error {
 			return nil
 		}
 		err := fn(c)
 		assert.Nil(err)
-		assert.Empty(c.GetHeader(cod.HeaderETag))
+		assert.Empty(c.GetHeader(elton.HeaderETag))
 	})
 
 	t.Run("error status", func(t *testing.T) {
 		assert := assert.New(t)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, nil)
+		c := elton.NewContext(resp, nil)
 		c.Next = func() error {
 			c.Body = map[string]string{
 				"name": "tree.xie",
@@ -75,12 +75,12 @@ func TestETag(t *testing.T) {
 		}
 		err := fn(c)
 		assert.Nil(err)
-		assert.Empty(c.GetHeader(cod.HeaderETag))
+		assert.Empty(c.GetHeader(elton.HeaderETag))
 	})
 
 	t.Run("gen eTag", func(t *testing.T) {
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, nil)
+		c := elton.NewContext(resp, nil)
 		c.Next = func() error {
 			c.Body = map[string]string{
 				"name": "tree.xie",
@@ -92,7 +92,7 @@ func TestETag(t *testing.T) {
 		if err != nil {
 			t.Fatalf("eTag middleware fail, %v", err)
 		}
-		if c.GetHeader(cod.HeaderETag) != `"13-yo9YroUOjW1obRvVoXfrCiL2JGE="` {
+		if c.GetHeader(elton.HeaderETag) != `"13-yo9YroUOjW1obRvVoXfrCiL2JGE="` {
 			t.Fatalf("gen eTag fail")
 		}
 	})

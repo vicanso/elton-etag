@@ -20,13 +20,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 )
 
 type (
 	// Config eTag config
 	Config struct {
-		Skipper cod.Skipper
+		Skipper elton.Skipper
 	}
 )
 
@@ -43,17 +43,17 @@ func gen(buf []byte) string {
 }
 
 // NewDefault create a default ETag middleware
-func NewDefault() cod.Handler {
+func NewDefault() elton.Handler {
 	return New(Config{})
 }
 
 // New create a ETag middleware
-func New(config Config) cod.Handler {
+func New(config Config) elton.Handler {
 	skipper := config.Skipper
 	if skipper == nil {
-		skipper = cod.DefaultSkipper
+		skipper = elton.DefaultSkipper
 	}
-	return func(c *cod.Context) (err error) {
+	return func(c *elton.Context) (err error) {
 		if skipper(c) {
 			return c.Next()
 		}
@@ -65,7 +65,7 @@ func New(config Config) cod.Handler {
 		// 如果无内容或已设置 ETag ，则跳过
 		// 因为没有内容也不生成 ETag
 		if bodyBuf == nil || bodyBuf.Len() == 0 ||
-			c.GetHeader(cod.HeaderETag) != "" {
+			c.GetHeader(elton.HeaderETag) != "" {
 			return
 		}
 		// 如果响应状态码不为0 而且( < 200 或者 >= 300)，则跳过
@@ -77,7 +77,7 @@ func New(config Config) cod.Handler {
 			return
 		}
 		eTag := gen(bodyBuf.Bytes())
-		c.SetHeader(cod.HeaderETag, eTag)
+		c.SetHeader(elton.HeaderETag, eTag)
 		return
 	}
 }
