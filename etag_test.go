@@ -113,7 +113,7 @@ func BenchmarkMd5(b *testing.B) {
 			return `"0-2jmj7l5rSw0yVb_vlWAYkK_YBwk="`
 		}
 		h := md5.New()
-		h.Write(buf)
+		_, _ = h.Write(buf)
 		hash := base64.URLEncoding.EncodeToString(h.Sum(nil))
 		return fmt.Sprintf(`"%x-%s"`, size, hash)
 	}
